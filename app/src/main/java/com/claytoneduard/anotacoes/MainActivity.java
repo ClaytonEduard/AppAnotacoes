@@ -17,28 +17,37 @@ import com.claytoneduard.anotacoes.databinding.ActivityMainBinding;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+    private AnotacaoPreferencias preferencias;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        preferencias = new AnotacaoPreferencias(getApplicationContext());
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-       // NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-       // appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //verificar se a algo digitado
+                String textoRecuperado = binding.includeMain.editAnotacao.getText().toString();
+                if (textoRecuperado.equals("")) {
+                    Snackbar.make(view, "Preencha a anotação!", Snackbar.LENGTH_LONG).show();
+                } else {
+                    preferencias.salvarAnotacao(textoRecuperado);
+                    Snackbar.make(view, "Anotação salva com sucesso!", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
+        //recuperar anotação
+        String anotacao = preferencias.recuperarAnotacao();
+        if(!anotacao.equals("")){
+            binding.includeMain.editAnotacao.setText(anotacao);
+        }
     }
 }
